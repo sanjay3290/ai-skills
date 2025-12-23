@@ -104,6 +104,54 @@ python scripts/generate_image.py --size 512 "Simple icon" "./icon.png"
 3. **Mention lighting**: "golden hour lighting", "soft diffused light", "dramatic shadows"
 4. **Specify composition**: "close-up", "wide angle", "from above", "centered"
 
+### Advanced Prompting Techniques
+
+These techniques produce significantly better results for photorealistic and professional imagery:
+
+#### Camera & Lens Specifications
+Include specific photography parameters for authentic looks:
+- **Lens focal length**: "85mm f/1.4 lens", "50mm prime", "35mm wide angle"
+- **Aperture**: "shallow depth of field at f/1.8", "deep focus at f/8"
+- **Camera angle**: "eye-level shot", "low angle looking up", "3/4 profile view"
+
+Example: `"Portrait shot with 85mm f/1.4 lens, shallow depth of field, subject sharp against soft bokeh background"`
+
+#### Lighting Architecture
+Specify complete lighting setups for professional results:
+- **Three-point lighting**: key light, fill light, rim/back light
+- **Catchlights**: reflections in eyes for portraits
+- **Shadow quality**: "soft shadows", "dramatic hard shadows", "subtle rim light"
+
+Example: `"Professional headshot with three-point lighting setup, soft key light from left, subtle fill light, rim light for hair separation, visible catchlights in eyes"`
+
+#### Film Stock & Era Aesthetics
+Reference specific film stocks or eras for authentic period looks:
+- **Film stocks**: "Kodak Portra 400 color palette", "Fujifilm Pro 400H tones", "Kodak Tri-X grain"
+- **Era aesthetics**: "1990s disposable camera quality", "early-2000s digital camera look", "1970s Polaroid style"
+- **Grain and texture**: "subtle film grain", "realistic sensor noise"
+
+Example: `"Casual portrait with Kodak Portra 400 color tones, natural film grain, 1990s aesthetic, soft warm highlights"`
+
+#### Facial Consistency (for portraits/people)
+When generating or editing images with faces, explicitly state preservation requirements:
+- `"Keep the facial features exactly consistent"`
+- `"Preserve original face structure and proportions"`
+- `"Do not alter or change the face"`
+
+#### Material & Texture Details
+Add realistic texture specifications:
+- **Skin**: "natural skin texture with visible pores", "subtle skin imperfections"
+- **Fabric**: "fine wool texture visible", "silk sheen and drape"
+- **Surfaces**: "brushed metal finish", "weathered wood grain"
+
+Example: `"Close-up portrait showing natural skin texture with visible pores, fine fabric detail on collar, realistic hair strands"`
+
+#### Composition Framing
+Be precise about framing and subject positioning:
+- **Shot types**: "chest-up framing", "3/4 body shot", "full body"
+- **Positioning**: "centered subject", "rule of thirds placement", "mirror selfie angle"
+- **Aspect ratio context**: "portrait orientation", "landscape format", "square crop"
+
 ### Example Prompts by Use Case
 
 **UI/Frontend:**
@@ -122,6 +170,14 @@ python scripts/generate_image.py --size 512 "Simple icon" "./icon.png"
 **Marketing/Creative:**
 - "Isometric illustration of a modern office workspace"
 - "Gradient abstract background suitable for presentation slides"
+
+**Professional Portraits (using advanced techniques):**
+- "Corporate headshot, 85mm f/2.8 lens, three-point studio lighting, navy blue suit, neutral gray backdrop, subtle catchlights, chest-up framing, natural skin texture"
+- "Casual lifestyle portrait, Kodak Portra 400 tones, natural window light, soft shadows, 3/4 body shot, authentic film grain, early-2000s digital aesthetic"
+
+**E-commerce & Product Photography:**
+- "Product photo of leather watch, 100mm macro lens, soft diffused lighting, visible leather texture and stitching, clean white background, subtle reflection"
+- "Fashion flat-lay, overhead shot, soft natural lighting, fabric texture visible, minimalist composition"
 
 ## Troubleshooting
 
