@@ -1,0 +1,47 @@
+{
+  "name": "deep-research",
+  "version": "1.0.0",
+  "description": "Execute autonomous multi-step research using Google Gemini Deep Research Agent. Produces detailed, cited reports for market analysis, competitive landscaping, literature reviews, and technical research.",
+  "author": "sanjay3290",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/sanjay3290/ai-skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanjay3290/ai-skills.git"
+  },
+  "keywords": [
+    "gemini",
+    "deep-research",
+    "research",
+    "analysis",
+    "market-research",
+    "literature-review",
+    "due-diligence",
+    "google-ai"
+  ],
+  "requirements": {
+    "python": ">=3.8",
+    "dependencies": [
+      "httpx>=0.25.0",
+      "python-dotenv>=1.0.0"
+    ],
+    "environment": [
+      "GEMINI_API_KEY"
+    ]
+  },
+  "entry": "scripts/research.py",
+  "commands": {
+    "research": {
+      "description": "Start a new research task",
+      "usage": "python3 scripts/research.py --query \"Your research question\""
+    },
+    "status": {
+      "description": "Check status of a research task",
+      "usage": "python3 scripts/research.py --status <interaction_id>"
+    },
+    "list": {
+      "description": "List recent research tasks",
+      "usage": "python3 scripts/research.py --list"
+    }
+  }
+}
