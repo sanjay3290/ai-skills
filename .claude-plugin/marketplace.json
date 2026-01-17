@@ -1,42 +1,40 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "ai-skills",
+  "description": "Collection of agent skills for AI coding assistants",
   "owner": {
     "name": "Sanjay"
-  },
-  "metadata": {
-    "description": "Collection of agent skills for AI coding assistants",
-    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "postgres",
       "source": "./skills/postgres",
       "description": "Execute read-only SQL queries against multiple PostgreSQL databases. Supports intelligent database selection based on descriptions, blocks all write operations for safety.",
-      "version": "1.0.0",
       "author": {
         "name": "Sanjay"
       },
-      "homepage": "https://github.com/sanjay3290/ai-skills",
-      "repository": "https://github.com/sanjay3290/ai-skills",
-      "license": "Apache-2.0",
-      "keywords": ["postgres", "postgresql", "database", "sql", "query", "read-only"],
       "category": "database",
-      "tags": ["database", "postgres", "sql", "data-analysis"]
+      "homepage": "https://github.com/sanjay3290/ai-skills/tree/main/skills/postgres"
     },
     {
       "name": "imagen",
       "source": "./skills/imagen",
       "description": "Generate images using Google Gemini's AI image generation model. Cross-platform support for Windows, macOS, and Linux. Create UI mockups, icons, illustrations, diagrams, and more.",
-      "version": "1.0.0",
       "author": {
         "name": "Sanjay"
       },
-      "homepage": "https://github.com/sanjay3290/ai-skills",
-      "repository": "https://github.com/sanjay3290/ai-skills",
-      "license": "Apache-2.0",
-      "keywords": ["image", "gemini", "ai", "generation", "art", "creative", "cross-platform"],
       "category": "media",
-      "tags": ["image-generation", "ai", "gemini", "creative", "cross-platform"]
+      "homepage": "https://github.com/sanjay3290/ai-skills/tree/main/skills/imagen"
+    },
+    {
+      "name": "deep-research",
+      "source": "./skills/deep-research",
+      "description": "Execute autonomous multi-step research using Google Gemini Deep Research Agent. Produces detailed, cited reports for market analysis, competitive landscaping, literature reviews, and technical research.",
+      "author": {
+        "name": "Sanjay"
+      },
+      "category": "research",
+      "homepage": "https://github.com/sanjay3290/ai-skills/tree/main/skills/deep-research"
     }
   ]
 }
