@@ -1,2 +1,6 @@
+# Document extraction (only needed for PDF / DOCX inputs)
 PyPDF2>=3.0.0
 python-docx>=1.0.0
+
+# 60db WebSocket TTS (only needed for the `ws` command)
+websocket-client>=1.6.0
