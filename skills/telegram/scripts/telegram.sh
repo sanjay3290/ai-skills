@@ -139,6 +139,35 @@ send_chunk() {
     -d "disable_notification=$silent" >/dev/null
 }
 
+cmd_file() {
+  local path="" caption="" to="" bot="" silent="false"
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --to) to="$2"; shift 2 ;;
+      --bot) bot="$2"; shift 2 ;;
+      --silent) silent="true"; shift ;;
+      -*) die "unknown flag for file: $1" ;;
+      *)
+        if [ -z "$path" ]; then path="$1"
+        elif [ -z "$caption" ]; then caption="$1"
+        else die "unexpected argument: $1"; fi
+        shift ;;
+    esac
+  done
+  [ -n "$path" ] || die "file needs a path (telegram.sh help)"
+  [ -f "$path" ] || die "file not found: $path"
+  resolve_bot "$bot"
+  resolve_target "$to"
+
+  local ext method="sendDocument" field="document"
+  ext=$(printf '%s' "${path##*.}" | tr '[:upper:]' '[:lower:]')
+  case "$ext" in
+    png|jpg|jpeg|gif|webp) method="sendPhoto" field="photo" ;;
+  esac
+  api "$method" -F "chat_id=$CHAT_ID" -F "$field=@$path" \
+    -F "caption=$caption" -F "disable_notification=$silent" >/dev/null
+}
+
 main() {
   check_deps
   load_config
@@ -147,6 +176,7 @@ main() {
   shift
   case "$cmd" in
     send) cmd_send "$@" ;;
+    file) cmd_file "$@" ;;
     -h|--help|help) usage ;;
     *) die "unknown command: $cmd (telegram.sh help)" ;;
   esac
