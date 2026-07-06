@@ -220,6 +220,87 @@ cmd_read() {
   fi
 }
 
+cmd_ask() {
+  local question="" options="Yes,No" timeout=300 to="" bot=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --options) options="$2"; shift 2 ;;
+      --timeout) timeout="$2"; shift 2 ;;
+      --to) to="$2"; shift 2 ;;
+      --bot) bot="$2"; shift 2 ;;
+      -*) die "unknown flag for ask: $1" ;;
+      *) if [ -z "$question" ]; then question="$1"; else die "unexpected argument: $1"; fi; shift ;;
+    esac
+  done
+  [ -n "$question" ] || die "ask needs a question (telegram.sh help)"
+  resolve_bot "$bot"
+  resolve_target "$to"
+
+  # Flush pending updates so stale messages can't answer the question.
+  local offset resp last
+  offset=$(get_offset)
+  resp=$(api getUpdates -d "offset=$offset" -d "timeout=0" -d "limit=100")
+  last=$(jq -r '.result | if length > 0 then (.[-1].update_id + 1 | tostring) else "" end' <<<"$resp")
+  if [ -n "$last" ]; then offset="$last"; save_offset "$offset"; fi
+
+  local keyboard msg_id
+  keyboard=$(jq -cn --arg opts "$options" \
+    '{inline_keyboard: [[$opts | split(",")[] | {text: ., callback_data: .}]]}')
+  resp=$(api sendMessage -d "chat_id=$CHAT_ID" \
+    --data-urlencode "text=$question" --data-urlencode "reply_markup=$keyboard")
+  msg_id=$(jq -r '.result.message_id' <<<"$resp")
+
+  local deadline now remain answer cb
+  deadline=$(( $(date +%s) + timeout ))
+  while :; do
+    now=$(date +%s)
+    remain=$(( deadline - now ))
+    if [ "$remain" -le 0 ]; then break; fi
+    if [ "$remain" -gt 25 ]; then remain=25; fi
+
+    resp=$(api getUpdates -d "offset=$offset" -d "timeout=$remain")
+    last=$(jq -r '.result | if length > 0 then (.[-1].update_id + 1 | tostring) else "" end' <<<"$resp")
+    if [ -n "$last" ]; then offset="$last"; save_offset "$offset"; fi
+
+    # Button tap on our question message?
+    cb=$(jq -r --argjson mid "$msg_id" --argjson chat "$CHAT_ID" '
+      [.result[]
+       | select(.callback_query.message.message_id == $mid)
+       | select(.callback_query.message.chat.id == $chat)
+       | .callback_query]
+      | if length > 0 then "\(.[0].data)\t\(.[0].id)" else "" end' <<<"$resp")
+    if [ -n "$cb" ]; then
+      answer="${cb%%$'\t'*}"
+      api answerCallbackQuery -d "callback_query_id=${cb##*$'\t'}" >/dev/null
+      api editMessageText -d "chat_id=$CHAT_ID" -d "message_id=$msg_id" \
+        --data-urlencode "text=$question
+✅ $answer" >/dev/null
+      printf '%s\n' "$answer"
+      return 0
+    fi
+
+    # Free-text reply from the asked chat?
+    answer=$(jq -r --argjson chat "$CHAT_ID" '
+      [.result[]
+       | select(.message.chat.id == $chat)
+       | select(.message.text != null)
+       | .message.text]
+      | if length > 0 then .[0] else "" end' <<<"$resp")
+    if [ -n "$answer" ]; then
+      api editMessageText -d "chat_id=$CHAT_ID" -d "message_id=$msg_id" \
+        --data-urlencode "text=$question
+💬 $answer" >/dev/null
+      printf '%s\n' "$answer"
+      return 0
+    fi
+  done
+
+  api editMessageText -d "chat_id=$CHAT_ID" -d "message_id=$msg_id" \
+    --data-urlencode "text=$question
+⏰ timed out" >/dev/null || true
+  return 2
+}
+
 main() {
   check_deps
   load_config
@@ -229,6 +310,7 @@ main() {
   case "$cmd" in
     send) cmd_send "$@" ;;
     file) cmd_file "$@" ;;
+    ask) cmd_ask "$@" ;;
     read) cmd_read "$@" ;;
     -h|--help|help) usage ;;
     *) die "unknown command: $cmd (telegram.sh help)" ;;
