@@ -73,7 +73,7 @@ scripts/telegram.sh send "*bold* alert" --format md
 scripts/telegram.sh send "<b>bold</b> alert" --format html
 
 # Named target and named bot
-scripts/telegram.sh send "hi" --to alerts --bot m9
+scripts/telegram.sh send "hi" --to alerts --bot work
 ```
 
 ### Send Files

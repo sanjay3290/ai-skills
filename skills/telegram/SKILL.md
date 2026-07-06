@@ -16,7 +16,7 @@ First run: `scripts/telegram.sh setup` (guided BotFather walkthrough).
 scripts/telegram.sh send "Deploy finished ✅"                    # basic alert
 scripts/telegram.sh send "low priority" --silent                # no notification sound
 scripts/telegram.sh send "*bold* alert" --format md             # MarkdownV2 (falls back to plain)
-scripts/telegram.sh send "hi" --to alerts --bot m9              # named target + named bot
+scripts/telegram.sh send "hi" --to alerts --bot work            # named target + named bot
 scripts/telegram.sh file report.pdf "Q3 report"                 # document (photos auto-detected)
 scripts/telegram.sh read                                        # new incoming messages since last read
 ANSWER=$(scripts/telegram.sh ask "Deploy to prod?" --options "Yes,No" --timeout 300)
