@@ -186,7 +186,7 @@ allowed_chats() {
       grep -E '^TARGET_[A-Za-z0-9_]+=' "$CONFIG_FILE" | cut -d= -f2 || true
     fi
     env | grep -E '^TARGET_[A-Za-z0-9_]+=' | cut -d= -f2 || true
-  } | grep -E '^-?[0-9]+$' | sort -u
+  } | grep -E '^-?[0-9]+$' | sort -u || true
 }
 
 cmd_read() {
