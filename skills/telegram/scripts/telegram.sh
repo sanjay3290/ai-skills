@@ -301,6 +301,62 @@ cmd_ask() {
   return 2
 }
 
+set_config_key() {
+  local key="$1" val="$2" tmp
+  ( umask 077; mkdir -p "$CONFIG_DIR"; touch "$CONFIG_FILE" )
+  tmp=$(mktemp "$CONFIG_DIR/.config.XXXXXX")
+  grep -v "^$key=" "$CONFIG_FILE" > "$tmp" || true
+  printf '%s=%s\n' "$key" "$val" >> "$tmp"
+  mv "$tmp" "$CONFIG_FILE"
+  chmod 600 "$CONFIG_FILE"
+}
+
+cmd_setup() {
+  local bot=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --bot) bot="$2"; shift 2 ;;
+      *) die "unknown flag for setup: $1" ;;
+    esac
+  done
+
+  printf 'Telegram bot setup%s\n\n' "${bot:+ (named bot: $bot)}" >&2
+  printf '  1. Open https://t.me/BotFather in Telegram\n' >&2
+  printf '  2. Send /newbot and follow the prompts (display name, then a username ending in "bot")\n' >&2
+  printf '  3. BotFather replies with an HTTP API token\n\n' >&2
+  printf 'Paste the token here: ' >&2
+  local token
+  read -r token
+  [ -n "$token" ] || die "no token entered"
+
+  BOT_TOKEN="$token"
+  local username
+  username=$(api getMe | jq -r '.result.username')
+  printf 'Token valid — bot is @%s\n\n' "$username" >&2
+
+  printf 'Now send any message to https://t.me/%s then press Enter... ' "$username" >&2
+  read -r _ || true
+  local chat_id
+  chat_id=$(api getUpdates | jq -r \
+    '[.result[] | .message.chat.id | select(. != null)] | if length > 0 then (.[-1] | tostring) else "" end')
+  [ -n "$chat_id" ] || die "no message found — send a message to @$username and rerun setup"
+
+  if [ -z "$bot" ]; then
+    set_config_key TELEGRAM_BOT_TOKEN "$token"
+    set_config_key TELEGRAM_CHAT_ID "$chat_id"
+  else
+    set_config_key "BOT_$(upper_key "$bot")_TOKEN" "$token"
+    if ! grep -q '^TELEGRAM_CHAT_ID=' "$CONFIG_FILE" 2>/dev/null; then
+      set_config_key TELEGRAM_CHAT_ID "$chat_id"
+    fi
+  fi
+
+  CHAT_ID="$chat_id"
+  api sendMessage -d "chat_id=$chat_id" \
+    --data-urlencode "text=✅ telegram.sh setup complete for @$username" >/dev/null
+  printf 'Config written to %s (chat %s) — confirmation sent.\n' "$CONFIG_FILE" "$chat_id" >&2
+}
+
 main() {
   check_deps
   load_config
@@ -308,6 +364,7 @@ main() {
   local cmd="$1"
   shift
   case "$cmd" in
+    setup) cmd_setup "$@" ;;
     send) cmd_send "$@" ;;
     file) cmd_file "$@" ;;
     ask) cmd_ask "$@" ;;
