@@ -106,7 +106,36 @@ cmd_send() {
   [ -n "$msg" ] || die "send needs a message (telegram.sh help)"
   resolve_bot "$bot"
   resolve_target "$to"
-  api sendMessage -d "chat_id=$CHAT_ID" --data-urlencode "text=$msg" \
+
+  local parse_mode=""
+  case "$format" in
+    '') ;;
+    md) parse_mode="MarkdownV2" ;;
+    html) parse_mode="HTML" ;;
+    *) die "--format must be md or html" ;;
+  esac
+
+  local chunk
+  while [ -n "$msg" ]; do
+    chunk="${msg:0:4096}"
+    msg="${msg:4096}"
+    send_chunk "$chunk" "$parse_mode" "$silent"
+  done
+}
+
+# send_chunk TEXT PARSE_MODE SILENT — one sendMessage; formatted sends fall
+# back to plain text if Telegram rejects the markup, so alerts never get lost.
+send_chunk() {
+  local text="$1" parse_mode="$2" silent="$3" resp
+  if [ -n "$parse_mode" ]; then
+    resp=$(curl -sS --max-time "${TELEGRAM_CURL_TIMEOUT:-35}" \
+      "$API_BASE/bot$BOT_TOKEN/sendMessage" \
+      -d "chat_id=$CHAT_ID" --data-urlencode "text=$text" \
+      -d "disable_notification=$silent" -d "parse_mode=$parse_mode") \
+      || die "network error calling sendMessage"
+    if [ "$(jq -r '.ok' <<<"$resp")" = "true" ]; then return 0; fi
+  fi
+  api sendMessage -d "chat_id=$CHAT_ID" --data-urlencode "text=$text" \
     -d "disable_notification=$silent" >/dev/null
 }
 
