@@ -115,6 +115,8 @@ scripts/telegram.sh read --limit 5
 scripts/telegram.sh read --all
 ```
 
+Note: `ask` and `read` share the same per-bot cursor, so an `ask` consumes incoming messages that a later `read` would otherwise show.
+
 ## Command Reference
 
 | Command | Description | Arguments | Exit codes |

@@ -199,6 +199,7 @@ cmd_read() {
       *) die "unknown flag for read: $1" ;;
     esac
   done
+  [[ "$limit" =~ ^[0-9]+$ ]] || die "--limit must be a whole number"
   resolve_bot "$bot"
 
   local offset=0 resp
@@ -233,6 +234,7 @@ cmd_ask() {
     esac
   done
   [ -n "$question" ] || die "ask needs a question (telegram.sh help)"
+  [[ "$timeout" =~ ^[0-9]+$ ]] || die "--timeout must be a whole number of seconds"
   resolve_bot "$bot"
   resolve_target "$to"
 
