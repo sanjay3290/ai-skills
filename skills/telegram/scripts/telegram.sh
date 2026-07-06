@@ -168,6 +168,58 @@ cmd_file() {
     -F "caption=$caption" -F "disable_notification=$silent" >/dev/null
 }
 
+offset_file() { printf '%s/offset.%s' "$CONFIG_DIR" "$BOT_KEY"; }
+
+get_offset() { cat "$(offset_file)" 2>/dev/null || printf '0'; }
+
+save_offset() {
+  ( umask 077; mkdir -p "$CONFIG_DIR"; printf '%s' "$1" > "$(offset_file)" )
+}
+
+# Chat IDs we accept incoming messages from: the default chat plus every
+# TARGET_* value in the config file and the environment. Strangers who
+# message a public bot never match.
+allowed_chats() {
+  {
+    printf '%s\n' "${TELEGRAM_CHAT_ID:-}"
+    if [ -f "$CONFIG_FILE" ]; then
+      grep -E '^TARGET_[A-Za-z0-9_]+=' "$CONFIG_FILE" | cut -d= -f2 || true
+    fi
+    env | grep -E '^TARGET_[A-Za-z0-9_]+=' | cut -d= -f2 || true
+  } | grep -E '^-?[0-9]+$' | sort -u
+}
+
+cmd_read() {
+  local limit=20 bot="" all="false"
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --limit) limit="$2"; shift 2 ;;
+      --bot) bot="$2"; shift 2 ;;
+      --all) all="true"; shift ;;
+      *) die "unknown flag for read: $1" ;;
+    esac
+  done
+  resolve_bot "$bot"
+
+  local offset=0 resp
+  if [ "$all" != "true" ]; then offset=$(get_offset); fi
+  resp=$(api getUpdates -d "offset=$offset" -d "limit=$limit")
+
+  jq -r --arg allowed "$(allowed_chats)" '
+    ($allowed | split("\n")) as $ok
+    | .result[]
+    | select(.message.text != null)
+    | select((.message.chat.id | tostring) as $c | $ok | index($c) != null)
+    | "[\(.message.chat.id)] \(.message.from.first_name // "?"): \(.message.text)"
+  ' <<<"$resp"
+
+  local last
+  last=$(jq -r '.result | if length > 0 then (.[-1].update_id + 1 | tostring) else "" end' <<<"$resp")
+  if [ -n "$last" ] && [ "$all" != "true" ]; then
+    save_offset "$last"
+  fi
+}
+
 main() {
   check_deps
   load_config
@@ -177,6 +229,7 @@ main() {
   case "$cmd" in
     send) cmd_send "$@" ;;
     file) cmd_file "$@" ;;
+    read) cmd_read "$@" ;;
     -h|--help|help) usage ;;
     *) die "unknown command: $cmd (telegram.sh help)" ;;
   esac
