@@ -1,7 +1,17 @@
 {
-  "api_key": "your-elevenlabs-api-key-here",
-  "default_voice": "JBFqnCBsd6RMkjVDRZzb",
-  "default_model": "eleven_multilingual_v2",
-  "podcast_voice1": "JBFqnCBsd6RMkjVDRZzb",
-  "podcast_voice2": "EXAVITQu4vr4xnSDxMaL"
+  "provider": "elevenlabs",
+  "elevenlabs": {
+    "api_key": "your-elevenlabs-api-key-here",
+    "default_voice": "JBFqnCBsd6RMkjVDRZzb",
+    "default_model": "eleven_multilingual_v2",
+    "podcast_voice1": "JBFqnCBsd6RMkjVDRZzb",
+    "podcast_voice2": "EXAVITQu4vr4xnSDxMaL"
+  },
+  "60db": {
+    "api_key": "your-60db-api-key-here",
+    "default_voice": "your-60db-voice-id",
+    "default_output_format": "mp3",
+    "podcast_voice1": "your-60db-voice-id-1",
+    "podcast_voice2": "your-60db-voice-id-2"
+  }
 }

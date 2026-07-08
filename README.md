@@ -37,7 +37,7 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [jules](skills/jules/) | Delegate coding tasks to Google Jules AI agent (async bug fixes, docs, tests, features) |
 | [manus](skills/manus/) | Delegate complex tasks to Manus AI agent (deep research, market analysis, reports) |
 | [notebooklm](skills/notebooklm/) | Query and manage Google NotebookLM notebooks with persistent profile auth, source sync, batch/multi queries, and structured exports |
-| [elevenlabs](skills/elevenlabs/) | Text-to-speech narration and two-host podcast generation from documents (PDF, DOCX, MD, TXT) using ElevenLabs API |
+| [elevenlabs](skills/elevenlabs/) | Multi-provider text-to-speech, podcast generation, streaming, WebSocket TTS, and speech-to-text from documents (PDF, DOCX, MD, TXT) using ElevenLabs or 60db |
 | [google-tts](skills/google-tts/) | Text-to-speech narration and podcast generation using Google Cloud TTS (Neural2, WaveNet, Studio voices, 40+ languages) |
 | [atlassian](skills/atlassian/) | Manage Jira issues and Confluence wiki pages in Atlassian Cloud (OAuth 2.1 via MCP server or API token fallback) |
 | [azure-devops](skills/azure-devops/) | Manage Azure DevOps projects, work items, repos, PRs, pipelines, wikis, test plans, security alerts, variable groups, environments/approvals, branch policies, and attachments (99 tools, 13 domains) |
@@ -223,13 +223,18 @@ export MANUS_API_KEY=your-api-key
 ```
 Get your API key from [manus.im](https://manus.im) settings. Manus excels at deep research, market analysis, product comparisons, and generating comprehensive reports with visualizations.
 
-### ElevenLabs
+### ElevenLabs / 60db
 ```bash
-pip install -r skills/elevenlabs/requirements.txt  # Only needed for PDF/DOCX
+pip install -r skills/elevenlabs/requirements.txt  # PyPDF2/python-docx for PDF/DOCX; websocket-client for 60db WebSocket TTS
 ```
-Create `skills/elevenlabs/config.json` (see `config.example.json`) or set `ELEVENLABS_API_KEY` env var. Requires `ffmpeg` for multi-chunk narration and podcasts.
+Multi-provider TTS — pick per command with `--provider elevenlabs|60db`. Create `skills/elevenlabs/config.json` (see `config.example.json`) or set `ELEVENLABS_API_KEY` / `SIXTYDB_API_KEY` env vars. Requires `ffmpeg` for multi-chunk narration and podcasts.
 
-Get your API key at [elevenlabs.io](https://elevenlabs.io/).
+| Provider | TTS | Streaming | WebSocket | Speech-to-Text |
+|----------|-----|-----------|-----------|----------------|
+| ElevenLabs (default) | ✅ | — | — | — |
+| 60db | ✅ | ✅ | ✅ | ✅ |
+
+Get an ElevenLabs key at [elevenlabs.io](https://elevenlabs.io/), or a 60db key at [60db.ai](https://60db.ai/).
 
 ### Google TTS
 ```bash
@@ -325,11 +330,13 @@ Once installed, skills activate automatically based on your requests. Just ask n
 - "Delegate market research on EV charging to Manus"
 - "Ask Manus to compare AWS vs GCP vs Azure pricing"
 
-### ElevenLabs
+### ElevenLabs / 60db
 - "Narrate this PDF as audio"
 - "Create a podcast from this document"
-- "Convert this markdown file to speech"
-- "List available ElevenLabs voices"
+- "Convert this markdown file to speech with 60db"
+- "Stream this text to speech using 60db"
+- "Transcribe this recording to text" (60db speech-to-text)
+- "List available ElevenLabs voices" / "List 60db voices"
 
 ### Google TTS
 - "Narrate this document using Google TTS"
