@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "ai-skills",
-      "description": "Collection of agent skills: PostgreSQL, MySQL, MSSQL, Imagen, Azure DevOps, Apple Container, Telegram, Atlassian (Jira + Confluence), Google Workspace (Gmail, Calendar, Chat, Docs, Drive, Sheets, Slides), NotebookLM, Jules, Manus, Deep Research, Outline, ElevenLabs, Google TTS, Grok Build.",
+      "description": "Collection of agent skills: PostgreSQL, MySQL, MSSQL, Imagen, Azure DevOps, Apple Container, Telegram, Atlassian (Jira + Confluence), Google Workspace (Gmail, Calendar, Chat, Docs, Drive, Sheets, Slides), NotebookLM, Jules, Manus, Deep Research, Outline, ElevenLabs, Google TTS, Grok Build, WhatsApp (pywhats).",
       "source": "./",
       "skills": [
         "./skills/postgres",
@@ -35,7 +35,8 @@
         "./skills/mssql",
         "./skills/atlassian",
         "./skills/telegram",
-        "./skills/grok-build"
+        "./skills/grok-build",
+        "./skills/whatsapp"
       ]
     }
   ]
