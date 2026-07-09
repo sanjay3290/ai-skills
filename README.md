@@ -36,6 +36,7 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [outline](skills/outline/) | Search, read, and manage Outline wiki documents |
 | [jules](skills/jules/) | Delegate coding tasks to Google Jules AI agent (async bug fixes, docs, tests, features) |
 | [manus](skills/manus/) | Delegate complex tasks to Manus AI agent (deep research, market analysis, reports) |
+| [grok-build](skills/grok-build/) | Orchestrate coding by delegating well-specified tasks to xAI's Grok Build CLI headlessly — the assistant plans, specs, dispatches, and reviews every diff |
 | [notebooklm](skills/notebooklm/) | Query and manage Google NotebookLM notebooks with persistent profile auth, source sync, batch/multi queries, and structured exports |
 | [elevenlabs](skills/elevenlabs/) | Text-to-speech narration and two-host podcast generation from documents (PDF, DOCX, MD, TXT) using ElevenLabs API |
 | [google-tts](skills/google-tts/) | Text-to-speech narration and podcast generation using Google Cloud TTS (Neural2, WaveNet, Studio voices, 40+ languages) |
@@ -223,6 +224,13 @@ export MANUS_API_KEY=your-api-key
 ```
 Get your API key from [manus.im](https://manus.im) settings. Manus excels at deep research, market analysis, product comparisons, and generating comprehensive reports with visualizations.
 
+### Grok Build
+Install xAI's Grok CLI per their docs, then authenticate:
+```bash
+grok login
+```
+Verify with `grok models`. The skill runs `grok` headlessly (`--always-approve`) and reviews every diff before committing. Works on macOS, Linux, and Windows (PowerShell).
+
 ### ElevenLabs
 ```bash
 pip install -r skills/elevenlabs/requirements.txt  # Only needed for PDF/DOCX
@@ -324,6 +332,12 @@ Once installed, skills activate automatically based on your requests. Just ask n
 - "Have Manus analyze AAPL stock with technical indicators"
 - "Delegate market research on EV charging to Manus"
 - "Ask Manus to compare AWS vs GCP vs Azure pricing"
+
+### Grok Build
+- "Use grok to implement this plan task-by-task"
+- "Have grok build the CRUD endpoints from this spec"
+- "Delegate the mechanical refactor in src/utils to grok"
+- "Execute this implementation plan with grok"
 
 ### ElevenLabs
 - "Narrate this PDF as audio"
