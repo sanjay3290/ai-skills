@@ -5,12 +5,12 @@
   },
   "metadata": {
     "description": "Collection of agent skills for AI coding assistants",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
     {
       "name": "ai-skills",
-      "description": "Collection of agent skills: PostgreSQL, MySQL, MSSQL, Imagen, Azure DevOps, Apple Container, Telegram, Atlassian (Jira + Confluence), Google Workspace (Gmail, Calendar, Chat, Docs, Drive, Sheets, Slides), NotebookLM, Jules, Manus, Deep Research, Outline, ElevenLabs, Google TTS.",
+      "description": "Collection of agent skills: PostgreSQL, MySQL, MSSQL, Imagen, Azure DevOps, Apple Container, Telegram, Atlassian (Jira + Confluence), Google Workspace (Gmail, Calendar, Chat, Docs, Drive, Sheets, Slides), NotebookLM, Jules, Manus, Deep Research, Outline, ElevenLabs, Google TTS, Grok Build.",
       "source": "./",
       "skills": [
         "./skills/postgres",
@@ -34,7 +34,8 @@
         "./skills/mysql",
         "./skills/mssql",
         "./skills/atlassian",
-        "./skills/telegram"
+        "./skills/telegram",
+        "./skills/grok-build"
       ]
     }
   ]
