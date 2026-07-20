@@ -44,6 +44,8 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [azure-devops](skills/azure-devops/) | Manage Azure DevOps projects, work items, repos, PRs, pipelines, wikis, test plans, security alerts, variable groups, environments/approvals, branch policies, and attachments (99 tools, 13 domains) |
 | [apple-container](skills/apple-container/) | Build, run, and manage OCI/Linux containers as lightweight VMs on Apple-silicon macOS with Apple's `container` CLI — no Docker daemon |
 | [telegram](skills/telegram/) | Send Telegram messages, files, and alerts via bot; ask-and-wait approvals with inline buttons; multi-bot and multi-target routing; Claude Code hook integration |
+| [whatsapp](skills/whatsapp/) | Send and receive WhatsApp messages through the unofficial pywhats linked-device client |
+| [x-twitter-scraper](skills/x-twitter-scraper/) | Xquik workflows for X/Twitter search, user lookup, follower export, media download, monitors, webhooks, SDKs, and MCP |
 
 ### Google Workspace Skills
 
@@ -72,7 +74,7 @@ The fastest path for Claude Code users, no extra tooling required:
 /plugin install ai-skills@ai-skills
 ```
 
-All 24 skills install as a single plugin; update later with `/plugin marketplace update ai-skills`.
+All 25 skills install as a single plugin; update later with `/plugin marketplace update ai-skills`.
 
 ### Any Agent — `skills` CLI
 
@@ -81,7 +83,7 @@ All 24 skills install as a single plugin; update later with `/plugin marketplace
 ### Install Skills
 
 ```bash
-# Browse all 24 available skills
+# Browse all 25 available skills
 npx skills add sanjay3290/ai-skills --list
 
 # Install a single skill (auto-detects your agent)
