@@ -1,0 +1,11 @@
+{
+  "_comment": "Copy this file to directory.json and fill in your own people and spaces. directory.json is personal, is gitignored, and is optional - without it, pass full email addresses and full 'spaces/...' names instead of aliases.",
+  "users": {
+    "alex": "alex@example.com",
+    "sam": "sam.taylor@example.com"
+  },
+  "spaces": {
+    "team": { "id": "spaces/AAAAxxxxxxx", "name": "My Team" },
+    "releases": { "id": "spaces/AAAAyyyyyyy", "name": "Release Announcements" }
+  }
+}
