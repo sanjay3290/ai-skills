@@ -87,13 +87,24 @@ Claude: *generates 2K image at specified path*
 
 ## Configuration
 
+Gemini remains the default provider. To opt into Atlas Cloud, set `ATLASCLOUD_API_KEY` and pass `--provider atlas`; the Atlas path validates the live model catalog, submits generation once without POST retries, and uses bounded retries only while polling prediction status.
+
+```bash
+export ATLASCLOUD_API_KEY="your-api-key-here"
+python scripts/generate_image.py --provider atlas --aspect 16:9 \
+  "A clean architecture diagram" "./architecture.png"
+```
+
 ### Environment Variables
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `GEMINI_API_KEY` | Yes | - | Your Google Gemini API key |
+| `GEMINI_API_KEY` | Gemini only | - | Your Google Gemini API key |
 | `IMAGE_SIZE` | No | `1K` | Default size (512, 1K, or 2K) |
 | `GEMINI_MODEL` | No | `gemini-3-pro-image-preview` | Gemini model ID |
+| `ATLASCLOUD_API_KEY` | Atlas only | - | Atlas Cloud API key |
+| `ATLAS_IMAGE_MODEL` | No | `google/nano-banana-2-lite/text-to-image-developer` | Atlas Cloud image model ID |
+| `IMAGE_PROVIDER` | No | `gemini` | Default provider (`gemini` or `atlas`) |
 
 ### Image Sizes
 

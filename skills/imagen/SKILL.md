@@ -1,7 +1,7 @@
 ---
 name: imagen
 description: |
-  Generate images using Google Gemini's image generation capabilities.
+  Generate images using Google Gemini by default, with Atlas Cloud as an optional provider.
   Use this skill when the user needs to create, generate, or produce images
   for any purpose including UI mockups, icons, illustrations, diagrams,
   concept art, placeholder images, or visual representations.
@@ -15,7 +15,7 @@ metadata:
 
 ## Overview
 
-This skill generates images using Google Gemini's image generation model (`gemini-3-pro-image-preview`). It enables seamless image creation during any Claude Code session - whether you're building frontend UIs, creating documentation, or need visual representations of concepts.
+This skill generates images using Google Gemini's image generation model (`gemini-3-pro-image-preview`). Atlas Cloud is also available as an explicit optional provider; Gemini remains the default. It enables seamless image creation during any Claude Code session - whether you're building frontend UIs, creating documentation, or need visual representations of concepts.
 
 **Cross-Platform**: Works on Windows, macOS, and Linux.
 
@@ -49,11 +49,16 @@ python scripts/generate_image.py "A minimalist app icon for a music player" "./a
 
 # With custom size
 python scripts/generate_image.py --size 2K "High resolution landscape" "./wallpaper.png"
+
+# Optional Atlas Cloud provider (currently 1K)
+python scripts/generate_image.py --provider atlas --aspect 16:9 \
+  "A cinematic landscape" "./landscape.png"
 ```
 
 ## Requirements
 
-- `GEMINI_API_KEY` environment variable must be set
+- `GEMINI_API_KEY` must be set for the default Gemini provider
+- `ATLASCLOUD_API_KEY` must be set only when `--provider atlas` is selected
 - Python 3.6+ (uses standard library only, no pip install needed)
 
 ## Output
