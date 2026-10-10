@@ -21,6 +21,7 @@ def _run_json(command: list[str]) -> dict:
         check=False,
         text=True,
         capture_output=True,
+        timeout=300,
     )
     if proc.returncode != 0:
         raise AssertionError(f"Command failed ({proc.returncode}): {' '.join(command)}\n{proc.stdout}\n{proc.stderr}")

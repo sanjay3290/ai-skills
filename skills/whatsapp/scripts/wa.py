@@ -56,7 +56,12 @@ def _ensure_pywhats() -> None:
             raise SystemExit(1)
         print("setting up the pywhats environment (a first run may take a minute)…", file=sys.stderr)
         # stdout carries the interpreter path; stderr (pip progress) streams through.
-        result = subprocess.run(["bash", bootstrap], stdout=subprocess.PIPE, text=True)
+        # Generous timeout: a first run creates a venv and pip-installs pywhats.
+        try:
+            result = subprocess.run(["bash", bootstrap], stdout=subprocess.PIPE, text=True, timeout=900)
+        except subprocess.TimeoutExpired:
+            print("error: bootstrap timed out after 900s — see messages above.", file=sys.stderr)
+            raise SystemExit(1)
         lines = [ln.strip() for ln in (result.stdout or "").splitlines() if ln.strip()]
         if result.returncode != 0 or not lines or not os.path.isfile(lines[-1]):
             print("error: bootstrap failed — see messages above.", file=sys.stderr)
