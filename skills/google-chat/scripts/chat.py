@@ -34,7 +34,7 @@ def load_directory() -> dict:
     it every command still works, you just pass full emails and 'spaces/...' names.
     """
     if not os.path.isfile(DIRECTORY_PATH):
-        return {"users": {}, "spaces": {}}
+        return {"users": {}, "spaces": {}, "user_ids": {}}
 
     try:
         with open(DIRECTORY_PATH, encoding="utf-8") as f:
@@ -42,12 +42,17 @@ def load_directory() -> dict:
     except (json.JSONDecodeError, OSError) as e:
         raise SystemExit("Could not read " + DIRECTORY_PATH + ": " + str(e))
 
-    return {"users": data.get("users") or {}, "spaces": data.get("spaces") or {}}
+    return {
+        "users": data.get("users") or {},
+        "spaces": data.get("spaces") or {},
+        "user_ids": data.get("user_ids") or {},
+    }
 
 
 DIRECTORY = load_directory()
 USER_EMAIL_ALIASES = DIRECTORY["users"]
 KNOWN_SPACES = DIRECTORY["spaces"]
+USER_IDS = DIRECTORY["user_ids"]
 
 
 def resolve_user(identifier: str) -> str:
@@ -259,6 +264,60 @@ def list_members(space_name: str) -> dict:
     return api_request("GET", space_name + "/members", params={"pageSize": 100})
 
 
+def refresh_directory(all_spaces: bool = False) -> dict:
+    """
+    Walk spaces and record every users/<id> -> display name we can see, so that
+    reading a conversation shows people's names instead of raw numeric IDs.
+
+    Defaults to the spaces already aliased in directory.json; --all-spaces sweeps
+    every space the account belongs to, which also picks up DM counterparts.
+    """
+    if all_spaces:
+        listed = list_spaces()
+        if "error" in listed:
+            return listed
+        targets = [s["name"] for s in listed["spaces"]]
+    else:
+        targets = [entry["id"] for entry in KNOWN_SPACES.values()]
+        if not targets:
+            return {"error": "No spaces in directory.json. Use --all-spaces to sweep every space."}
+
+    found = {}
+    skipped = 0
+    for space_name in targets:
+        result = list_members(space_name)
+        if "error" in result:
+            skipped += 1
+            continue
+        for membership in result.get("memberships", []):
+            member = membership.get("member", {})
+            name, display = member.get("name"), member.get("displayName")
+            if name and display:
+                found[name] = display
+
+    if not os.path.isfile(DIRECTORY_PATH):
+        return {"error": "No directory.json to update. Copy directory.example.json first."}
+
+    with open(DIRECTORY_PATH, encoding="utf-8") as f:
+        data = json.load(f)
+
+    existing = data.get("user_ids") or {}
+    added = {k: v for k, v in found.items() if k not in existing}
+    existing.update(found)
+    data["user_ids"] = dict(sorted(existing.items(), key=lambda kv: kv[1]))
+
+    with open(DIRECTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+    return {
+        "spacesScanned": len(targets) - skipped,
+        "spacesSkipped": skipped,
+        "namesKnown": len(existing),
+        "namesAdded": added,
+    }
+
+
 def setup_space(display_name: str, user_emails: list) -> dict:
     memberships = [
         {"member": {"name": "users/" + resolve_user(email), "type": "HUMAN"}}
@@ -375,7 +434,10 @@ def format_compact(result: dict) -> Optional[str]:
         lines = []
         for msg in result["messages"]:
             sender = msg.get("sender", {})
-            who = sender.get("displayName") or sender.get("name", "unknown")
+            # Listed messages carry only users/<id>; directory.json maps those to names.
+            who = (sender.get("displayName")
+                   or USER_IDS.get(sender.get("name", ""))
+                   or sender.get("name", "unknown"))
             when = (msg.get("createTime") or "")[:19].replace("T", " ")
             text = (msg.get("text") or "").strip() or "(no text)"
             if msg.get("attachment"):
@@ -428,6 +490,10 @@ def main():
 
     p = add("list-members", "List members of a space")
     p.add_argument("space")
+
+    p = add("refresh-directory", "Record sender display names into directory.json")
+    p.add_argument("--all-spaces", action="store_true",
+                   help="Sweep every space you belong to, not just aliased ones")
 
     p = add("get-messages", "Get recent messages from a space")
     p.add_argument("space")
@@ -498,6 +564,8 @@ def main():
         result = find_space_by_name(args.name)
     elif c == "list-members":
         result = list_members(resolve_space(args.space))
+    elif c == "refresh-directory":
+        result = refresh_directory(args.all_spaces)
     elif c == "get-messages":
         result = get_messages(resolve_space(args.space), args.limit, args.page_token)
     elif c == "get-message":

@@ -7,5 +7,9 @@
   "spaces": {
     "team": { "id": "spaces/AAAAxxxxxxx", "name": "My Team" },
     "releases": { "id": "spaces/AAAAyyyyyyy", "name": "Release Announcements" }
+  },
+  "_user_ids_comment": "Maps users/<id> to display names so reads show who said what. Run 'chat.py refresh-directory' to fill this in automatically.",
+  "user_ids": {
+    "users/123456789012345678901": "Alex Example"
   }
 }
