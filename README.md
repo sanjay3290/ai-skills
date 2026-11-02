@@ -43,6 +43,7 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [google-tts](skills/google-tts/) | Text-to-speech narration and podcast generation using Google Cloud TTS (Neural2, WaveNet, Studio voices, 40+ languages) |
 | [atlassian](skills/atlassian/) | Manage Jira issues and Confluence wiki pages in Atlassian Cloud (OAuth 2.1 via MCP server or API token fallback) |
 | [azure-devops](skills/azure-devops/) | Manage Azure DevOps projects, work items, repos, PRs, pipelines, wikis, test plans, security alerts, variable groups, environments/approvals, branch policies, and attachments (99 tools, 13 domains) |
+| [ac-verify](skills/ac-verify/) | Verify Azure DevOps acceptance criteria and linked test cases against code and execution evidence; optionally post a coverage report |
 | [apple-container](skills/apple-container/) | Build, run, and manage OCI/Linux containers as lightweight VMs on Apple-silicon macOS with Apple's `container` CLI — no Docker daemon |
 | [telegram](skills/telegram/) | Send Telegram messages, files, and alerts via bot; ask-and-wait approvals with inline buttons; multi-bot and multi-target routing; Claude Code hook integration |
 
@@ -82,7 +83,7 @@ All 25 skills install as a single plugin; update later with `/plugin marketplace
 ### Install Skills
 
 ```bash
-# Browse all 24 available skills
+# Browse all 25 available skills
 npx skills add sanjay3290/ai-skills --list
 
 # Install a single skill (auto-detects your agent)
