@@ -31,6 +31,7 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [postgres](skills/postgres/) | Read-only PostgreSQL queries with defense-in-depth security |
 | [mysql](skills/mysql/) | Read-only MySQL queries with session-level write protection |
 | [mssql](skills/mssql/) | Read-only Microsoft SQL Server queries with query validation security |
+| [gemini-api](skills/gemini-api/) | Call the Gemini API from the shell with Google's `gemini-api` CLI — text, image generation and editing, TTS, music, video, document/audio/video analysis, transcription, and background managed agents (Deep Research) |
 | [imagen](skills/imagen/) | AI image generation using Google Gemini (cross-platform) |
 | [deep-research](skills/deep-research/) | Autonomous multi-step research using Gemini Deep Research Agent |
 | [outline](skills/outline/) | Search, read, and manage Outline wiki documents |
@@ -72,7 +73,7 @@ The fastest path for Claude Code users, no extra tooling required:
 /plugin install ai-skills@ai-skills
 ```
 
-All 24 skills install as a single plugin; update later with `/plugin marketplace update ai-skills`.
+All 25 skills install as a single plugin; update later with `/plugin marketplace update ai-skills`.
 
 ### Any Agent — `skills` CLI
 
