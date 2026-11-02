@@ -211,6 +211,10 @@ def chunk_text(text: str, max_chars: int = MAX_CHUNK_CHARS) -> list[str]:
 
 # --- Audio Processing ---
 
+# Stream-copy concat is normally near-instant; this only guards against a hung ffmpeg.
+FFMPEG_TIMEOUT = 300  # seconds
+
+
 def check_ffmpeg() -> bool:
     """Check if ffmpeg is available."""
     return shutil.which("ffmpeg") is not None
@@ -239,13 +243,16 @@ def concat_audio(file_list: list[str], output: str):
         result = subprocess.run(
             ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_path,
              "-c", "copy", output],
-            capture_output=True, text=True
+            capture_output=True, text=True, timeout=FFMPEG_TIMEOUT
         )
         if result.returncode != 0:
             print(f"Error: ffmpeg concatenation failed", file=sys.stderr)
             if result.stderr:
                 print(result.stderr, file=sys.stderr)
             sys.exit(1)
+    except subprocess.TimeoutExpired:
+        print(f"Error: ffmpeg concatenation timed out after {FFMPEG_TIMEOUT}s", file=sys.stderr)
+        sys.exit(1)
     finally:
         os.unlink(list_path)
 
