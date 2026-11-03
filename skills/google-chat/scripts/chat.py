@@ -9,6 +9,7 @@ import json
 import mimetypes
 import os
 import sys
+import tempfile
 import urllib.request
 import urllib.error
 import urllib.parse
@@ -237,9 +238,22 @@ def upload_batch(space_name: str, file_paths: list, text: str = "") -> dict:
 # =============================================================================
 
 
+def list_all(endpoint: str, key: str) -> dict:
+    """Follow nextPageToken until the listing is exhausted, collecting every item under key."""
+    items = []
+    params = {"pageSize": 100}
+    while True:
+        result = api_request("GET", endpoint, params=params)
+        if "error" in result:
+            return result
+        items.extend(result.get(key, []))
+        if not result.get("nextPageToken"):
+            return {key: items}
+        params["pageToken"] = result["nextPageToken"]
+
+
 def list_spaces() -> dict:
-    result = api_request("GET", "spaces")
-    return {"spaces": result.get("spaces", [])} if "spaces" in result else result
+    return list_all("spaces", "spaces")
 
 
 def squash(value: str) -> str:
@@ -261,7 +275,7 @@ def find_space_by_name(display_name: str) -> dict:
 
 
 def list_members(space_name: str) -> dict:
-    return api_request("GET", space_name + "/members", params={"pageSize": 100})
+    return list_all(space_name + "/members", "memberships")
 
 
 def refresh_directory(all_spaces: bool = False) -> dict:
@@ -276,7 +290,7 @@ def refresh_directory(all_spaces: bool = False) -> dict:
         listed = list_spaces()
         if "error" in listed:
             return listed
-        targets = [s["name"] for s in listed["spaces"]]
+        targets = [s["name"] for s in listed.get("spaces", [])]
     else:
         targets = [entry["id"] for entry in KNOWN_SPACES.values()]
         if not targets:
@@ -306,9 +320,17 @@ def refresh_directory(all_spaces: bool = False) -> dict:
     existing.update(found)
     data["user_ids"] = dict(sorted(existing.items(), key=lambda kv: kv[1]))
 
-    with open(DIRECTORY_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    # Write beside the target and swap it in, so a crash mid-write cannot truncate
+    # a hand-maintained directory.json.
+    fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(DIRECTORY_PATH), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        os.replace(tmp_path, DIRECTORY_PATH)
+    except BaseException:
+        os.unlink(tmp_path)
+        raise
 
     return {
         "spacesScanned": len(targets) - skipped,
