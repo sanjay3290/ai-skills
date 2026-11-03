@@ -88,6 +88,7 @@ Global flags: `--raw` (full JSON instead of compact output), `--dry-run` (print 
 | `add-reaction <message> <emoji>` | React to a message | message name, emoji |
 | `find-dm <email>` | Find/create DM space | user email |
 | `setup-space <name> [emails...]` | Create space | name, member emails |
+| `refresh-directory` | Record sender display names into `directory.json` | `--all-spaces` |
 
 ## Space and Message Name Formats
 
@@ -105,6 +106,8 @@ Copy `directory.example.json` to `directory.json` to map short names to the peop
 ```
 
 `send-message team "Deploying now"` and `send-dm alex "..."` then resolve locally with no API call. `directory.json` is personal and gitignored; the feature is optional and full emails and IDs keep working without it.
+
+Listed messages identify senders only as `users/<id>`. `refresh-directory` reads the members of your aliased spaces (or every space with `--all-spaces`) and stores their display names under `user_ids` in `directory.json`, so `get-messages` shows who said what instead of numeric IDs.
 
 ## Attachment Behaviour
 

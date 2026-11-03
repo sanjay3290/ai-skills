@@ -104,6 +104,17 @@ no API call. Full emails and `spaces/...` names keep working everywhere.
 command still works, and an unresolvable alias fails immediately with the list of valid ones
 rather than silently falling back to a scan.
 
+Listed messages identify senders only as `users/<id>`. Run `refresh-directory` to record
+the display names of everyone in your aliased spaces into a `user_ids` map in
+`directory.json`, so `get-messages` shows names instead of numeric IDs:
+
+```bash
+python scripts/chat.py refresh-directory                # members of aliased spaces
+python scripts/chat.py refresh-directory --all-spaces   # every space, including DMs
+```
+
+It only adds and updates entries, and it reads members, so it never sends anything.
+
 ## Message formatting
 
 Chat supports `*bold*`, `_italic_`, `~strike~`, `` `code` ``, triple-backtick code blocks, and
