@@ -33,6 +33,7 @@ A collection of portable skills for AI coding assistants. Works with all major A
 | [mssql](skills/mssql/) | Read-only Microsoft SQL Server queries with query validation security |
 | [gemini-api](skills/gemini-api/) | Call the Gemini API from the shell with Google's `gemini-api` CLI — text, image generation and editing, TTS, music, video, document/audio/video analysis, transcription, and background managed agents (Deep Research) |
 | [imagen](skills/imagen/) | AI image generation using Google Gemini (cross-platform) |
+| [liuguang-banlan-ui](skills/liuguang-banlan-ui/) | Parameterized iridescent-white and colorful-black UI workbenches with OKLCH, WebGL/CSS fallback, screenshot QA, and intensity reports |
 | [deep-research](skills/deep-research/) | Autonomous multi-step research using Gemini Deep Research Agent |
 | [outline](skills/outline/) | Search, read, and manage Outline wiki documents |
 | [jules](skills/jules/) | Delegate coding tasks to Google Jules AI agent (async bug fixes, docs, tests, features) |
